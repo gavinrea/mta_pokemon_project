@@ -3,7 +3,6 @@ import java.awt.*;
 
 public abstract class Tile {
 	public abstract void draw(Graphics g, int x, int y);
-
 }
 class BlankTile extends Tile{
 	public void draw(Graphics g, int x, int y){
@@ -11,6 +10,7 @@ class BlankTile extends Tile{
 		g.fillRect(x, y, BasicWindow.TILE_SIZE, BasicWindow.TILE_SIZE);
 	}
 }
+
 class ForestTile extends Tile{
 	public void draw(Graphics g, int x, int y){
 		g.setColor(Color.BLACK);
@@ -19,8 +19,6 @@ class ForestTile extends Tile{
 		int[] xVal = {x, x + 25, x + 49};
 		int[] yVal = {y + 49, y, y + 49};
 		g.fillPolygon(xVal, yVal, 3);
-
-
 	}
 }
 
