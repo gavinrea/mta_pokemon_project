@@ -15,7 +15,7 @@ public class BasicWindow extends JFrame
 	//create world to specifications
 	private Tile[][] world = new Tile[NUM_WORLD_ROWS][NUM_WORLD_COLS];
 	//starting location of character
-	private int charRow = 5;
+	private int charRow = 11;
 	private int charCol = 5;
 
 	// data structure 
@@ -55,39 +55,49 @@ public class BasicWindow extends JFrame
 		{
 			code = k.getKeyCode();
 
-				code = k.getKeyCode();
-				//print out the key
-				System.out.println("The key pressed was " + code);
-				//wasd controls
-				if(code == k.VK_LEFT)
-				{
-					charRow --;
-				}
-				else if(code == k.VK_RIGHT)
-				{
-					charRow++;
-				}
-				else if(code == k.VK_UP)
-				{
-					charCol--;
-				}
-				else if(code == k.VK_DOWN)
-				{
-					charCol++;
-				}
-				repaint();
+			code = k.getKeyCode();
+			//print out the key
+			
+			//wasd controls
+			int changeRow=0;
+			int changeCol=0;
+
+			if(code == k.VK_LEFT)
+			{
+				changeRow --;
+			}
+			else if(code == k.VK_RIGHT)
+			{
+				changeRow++;
+			}
+			else if(code == k.VK_UP)
+			{
+				changeCol--;
+			}
+			else if(code == k.VK_DOWN)
+			{
+				changeCol++;
+			}
+			if(world[charRow + changeRow][charCol + changeCol].isSolid() == false) 
+			{
+				charRow= charRow+changeRow;
+				charCol= charCol+changeCol;
+			}
+			System.out.println("Row " + charRow + ", Col " + charCol);
+			repaint();
 
 		}
-		
+
 		public void keyReleased(KeyEvent k){
 			code=0;
 
 		}
-		
+
 		//controller functions
 		public void keyTyped(KeyEvent k)
 		{
-			char c = k.getKeyChar();
+			/*
+			 * char c = k.getKeyChar();
 			//print out the key
 			System.out.println("The key pressed was " + c);
 			//asdw controls
@@ -104,6 +114,8 @@ public class BasicWindow extends JFrame
 				charCol++;
 			}
 			repaint();
+		}
+			 */
 		}
 	}
 	// constructor for window
@@ -144,7 +156,7 @@ public class BasicWindow extends JFrame
 				//upper left hand corner
 				int row = s.nextInt();
 				int col = s.nextInt();
-				//how many tiles wide/heigh
+				//how many tiles wide/high
 				int height = s.nextInt();
 				int width = s.nextInt();
 				//create a tile which will run a gauntlet of if statements to be assigned
