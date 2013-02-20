@@ -8,10 +8,14 @@ public class BasicWindow extends JFrame
 {
 	//all initial values for frame and world size
 	public static final int TILE_SIZE = 50;
+	public static final int BORDER_WIDTH = 5;
 	public static final int VIEW_SIZE = 11;
 	public static final int SCREEN_SIZE = TILE_SIZE * VIEW_SIZE;
-	public static final int NUM_WORLD_ROWS = 1000;
-	public static final int NUM_WORLD_COLS = 1000;
+	public static final int EFFECTIVE_WORLD_ROWS = 1000;
+	public static final int EFFECTIVE_WORLD_COLS = 1000;
+	public static final int NUM_WORLD_ROWS = EFFECTIVE_WORLD_ROWS + BORDER_WIDTH * 2;
+	public static final int NUM_WORLD_COLS = EFFECTIVE_WORLD_COLS + BORDER_WIDTH * 2;;
+
 	//create world to specifications
 	private Tile[][] world = new Tile[NUM_WORLD_ROWS][NUM_WORLD_COLS];
 	//starting location of character
@@ -25,9 +29,9 @@ public class BasicWindow extends JFrame
 		public void paint(Graphics g)
 		{
 			super.paint(g);
-			int x = 0;
+			int y = 0;
 			for(int row = charRow - 5; row <= charRow + 5; row++){
-				int y = 0;
+				int x = 0;
 				for(int col = charCol - 5; col <= charCol + 5; col++){
 					//if there's a tile there, paint it
 					if(world[row][col] != null){
@@ -41,9 +45,9 @@ public class BasicWindow extends JFrame
 							g.fillOval(x + 10, y + 10, 30, 20);
 						}//chara specifications
 					}//if(world[][])
-					y += 50;
+					x += 50;
 				}//for(int col)
-				x += 50;
+				y += 50;
 			}// for int charRow
 		}//paint(Graphics g)
 	}//MyCanvas()
@@ -54,38 +58,36 @@ public class BasicWindow extends JFrame
 		public void keyPressed(KeyEvent k)
 		{
 			code = k.getKeyCode();
-
-			code = k.getKeyCode();
 			//print out the key
-			
+
 			//wasd controls
 			int changeRow=0;
 			int changeCol=0;
 
 			if(code == k.VK_LEFT)
 			{
-				changeRow --;
+				changeCol --;
 			}
 			else if(code == k.VK_RIGHT)
 			{
-				changeRow++;
+				changeCol++;
 			}
 			else if(code == k.VK_UP)
 			{
-				changeCol--;
+				changeRow--;
 			}
 			else if(code == k.VK_DOWN)
 			{
-				changeCol++;
+				changeRow++;
 			}
 			if(world[charRow + changeRow][charCol + changeCol].isSolid() == false) 
 			{
 				charRow= charRow+changeRow;
 				charCol= charCol+changeCol;
+				System.out.println("Row " + charRow + ", Col " + charCol+ ", " + world[charRow][charCol]);
+				System.out.println(world[charRow][charCol].isSolid());
+				repaint();
 			}
-			System.out.println("Row " + charRow + ", Col " + charCol);
-			repaint();
-
 		}
 
 		public void keyReleased(KeyEvent k){
@@ -128,12 +130,45 @@ public class BasicWindow extends JFrame
 		add(mc);
 		pack();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//fill world with blank tiles so we won't get null pointer exceptions
-		for(int i = 0; i < NUM_WORLD_ROWS;i++)
+		//fill inner square with blank tiles so we don't get any null pointer exceptions
+		for(int i = BORDER_WIDTH; i < NUM_WORLD_ROWS - BORDER_WIDTH;i++)
+		{
+			for(int j = BORDER_WIDTH; j < NUM_WORLD_ROWS - BORDER_WIDTH;j++)
+			{
+				world[i][j] = new WhiteTile();
+			}
+		}
+		//make a black border around the outside of the image to prevent players from walking off the world
+		//left vertical
+		for(int i = 0; i < BORDER_WIDTH;i++)
 		{
 			for(int j = 0; j < NUM_WORLD_ROWS;j++)
 			{
-				world[i][j] = new BlankTile();
+				world[i][j] = new BlackTile();
+			}
+		}
+		//right vertical
+		for(int i = NUM_WORLD_ROWS - BORDER_WIDTH; i < BORDER_WIDTH;i++)
+		{
+			for(int j = 0; j < NUM_WORLD_ROWS;j++)
+			{
+				world[i][j] = new BlackTile();
+			}
+		}
+		//top horizontal
+		for(int i = BORDER_WIDTH; i < NUM_WORLD_ROWS - BORDER_WIDTH;i++)
+		{
+			for(int j = 0; j < BORDER_WIDTH;j++)
+			{
+				world[i][j] = new BlackTile();
+			}
+		}
+		//bottom horizontal
+		for(int i = BORDER_WIDTH; i < NUM_WORLD_ROWS - BORDER_WIDTH;i++)
+		{
+			for(int j = NUM_WORLD_ROWS - BORDER_WIDTH; j < NUM_WORLD_ROWS;j++)
+			{
+				world[i][j] = new BlackTile();
 			}
 		}
 		//read in the world
@@ -160,8 +195,9 @@ public class BasicWindow extends JFrame
 				int height = s.nextInt();
 				int width = s.nextInt();
 				//create a tile which will run a gauntlet of if statements to be assigned
-				Tile t = new BlankTile();
+				Tile t = new WhiteTile();
 				String terrainType = s.next();
+				//is there a more elegant way? what if we name the tiles the same as on world? Do we need all these ifs?
 				if(terrainType.equals("forest"))
 				{
 					t = new ForestTile();
@@ -174,14 +210,18 @@ public class BasicWindow extends JFrame
 				{
 					t = new DirtTile();
 				}
-				//set the world array point equal to the tile
-				for(int x = row; x < row + width; x++)
+				else if(terrainType.equals("red"))
 				{
-					for(int y = col; y < col + height; y++)
+					t = new RedTile();
+				}
+				//set the world array point equal to the tile
+				for(int c = col; c < col + width; c++)
+				{
+					for(int r = row; r < row + height; r++)
 					{
-						world[x][y] = t;
+						world[r + BORDER_WIDTH][c + BORDER_WIDTH] = t;
 						//log to console
-						System.out.println("creating "+terrainType+" at " + row + ", "+ col);
+						System.out.println("creating " + terrainType + " at " + row + ", "+ col);
 
 					}
 				}
