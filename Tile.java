@@ -31,9 +31,9 @@ class BlackTile extends Tile{
 	}
 }
 //test on drawpicture
-class RedTile extends Tile{
+class PicTile extends Tile{
 	private BufferedImage buf;
-	public RedTile(){
+	public PicTile(){
 		try{
 			File f = new File("/Users/gavinrea/Desktop/birds.jpeg");
 			System.out.println("File status = " + f.isFile());
