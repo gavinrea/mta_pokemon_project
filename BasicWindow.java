@@ -88,13 +88,18 @@ public class BasicWindow extends JFrame
 				System.out.println(world[charRow][charCol].isSolid());
 				repaint();
 			}
+			//if it's a water tile: buggy code
+			/*else if(world[charRow + changeRow][charCol + changeCol] == Tile.WaterTile){
+				if(pokemon.has(waterType)){
+					setSolid(world[charRow + changeRow][charCol + changeCol]);
+				}
+				else{
+				System.out.println("None of your pokemon know surf");
+			}*/
 		}
 
 		public void keyReleased(KeyEvent k){
-			code=0;
-
 		}
-
 		//controller functions
 		public void keyTyped(KeyEvent k)
 		{
@@ -210,9 +215,9 @@ public class BasicWindow extends JFrame
 				{
 					t = new DirtTile();
 				}
-				else if(terrainType.equals("red"))
+				else if(terrainType.equals("pic"))
 				{
-					t = new RedTile();
+					t = new PicTile();
 				}
 				//set the world array point equal to the tile
 				for(int c = col; c < col + width; c++)
